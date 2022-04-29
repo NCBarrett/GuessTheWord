@@ -52,55 +52,19 @@ class GameFragment : Fragment() {
 
         Log.i("GameFragment", "Called ViewModelProvider.get")
         viewModel = ViewModelProvider(this).get(GameViewModel::class.java)
+        // Set the viewmodel for databinding - this allows the bound layout access
+        // to all the data in the ViewModel
+        binding.gameViewModel = viewModel
+        // Specify the fragment view as the lifecycle owner of the binding.
+        // This is used so that the binding can observe LiveData updates
+        binding.lifecycleOwner = viewLifecycleOwner
 
         viewModel.eventGameFinish.observe(viewLifecycleOwner, Observer<Boolean> { hasFinished ->
             if (hasFinished) gameFinished()
         })
 
-        /** Setting up LiveData observation relationship **/
-        viewModel.score.observe(viewLifecycleOwner, Observer { newScore ->
-            binding.scoreText.text = newScore.toString()
-        })
-
-        /** Setting up LiveData observation relationship **/
-        viewModel.word.observe(viewLifecycleOwner, Observer { newWord ->
-            binding.wordText.text = newWord
-        })
-
-        binding.correctButton.setOnClickListener { onCorrect() }
-        binding.skipButton.setOnClickListener { onSkip() }
-        binding.endGameButton.setOnClickListener { onEndGame() }
-/**        updateScoreText()
-        updateWordText()*/
         return binding.root
 
-    }
-
-    /** Methods for buttons presses **/
-    private fun onSkip() {
-        /** score--
-        nextWord()*/
-        viewModel.onSkip()
-/**        updateWordText()
-        updateScoreText()*/
-    }
-    private fun onCorrect() {
-        /** score++
-        nextWord()*/
-        viewModel.onCorrect()
-/**        updateWordText()
-        updateScoreText()*/
-    }
-
-    /** Methods for updating the UI **/
-/**    private fun updateWordText() {
-        binding.wordText.text = viewModel.word.value
-    }
-    private fun updateScoreText() {
-        binding.scoreText.text = viewModel.score.value.toString()
-    }*/
-    private fun onEndGame() {
-        gameFinished()
     }
 
     /**
